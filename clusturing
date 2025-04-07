@@ -1,0 +1,29 @@
+import numpy as np  # For numerical computations
+import pandas as pd  # For data manipulation
+from sklearn.model_selection import train_test_split  # To split dataset
+from sklearn.metrics import mean_squared_error  # To evaluate model performance
+from scipy.cluster.hierarchy import linkage, dendrogram  # For hierarchical clustering
+import matplotlib.pyplot as plt  # For plotting
+
+# Load the dataset
+data_path = "Advertising.csv"  # Dataset file path
+data = pd.read_csv(data_path)  # Read data into DataFrame
+
+# Display first few rows to inspect
+print("Sample data:")
+print(data.head())
+
+# Extract features for clustering
+features = data[['TV', 'radio', 'newspaper']].values  # Convert to NumPy array
+
+# Compute linkage matrix using average linkage
+linkage_avg = linkage(features, method='average')
+
+# Plot the dendrogram
+plt.figure(figsize=(12, 6))  # Adjust figure size
+plt.title("Hierarchical Clustering Dendrogram (Average Linkage)")
+plt.xlabel("Data Point Index")
+plt.ylabel("Euclidean Distance")
+dendrogram(linkage_avg)
+plt.tight_layout()
+plt.show()
