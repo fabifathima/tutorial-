@@ -1,0 +1,37 @@
+import numpy as np
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
+
+# Sample data: two classes, two features
+features = np.array([[1, 2], [4, 5]])
+labels = np.array([0, 1])
+
+# --- Using Scikit-learn ---
+lda_model = LinearDiscriminantAnalysis(n_components=1)
+lda_transformed = lda_model.fit_transform(features, labels)
+print("LDA Transformed Data (Scikit-learn):")
+print(lda_transformed)
+
+# --- Manual LDA Computation ---
+# Separate classes
+class0 = features[labels == 0]
+class1 = features[labels == 1]
+
+# Compute class means
+mean0 = class0.mean(axis=0)
+mean1 = class1.mean(axis=0)
+
+# Compute within-class scatter matrix
+scatter_within = np.cov(features.T)
+
+# Compute between-class scatter matrix
+mean_diff = (mean1 - mean0).reshape(-1, 1)
+scatter_between = mean_diff @ mean_diff.T
+
+# Solve generalized eigenvalue problem
+eig_vals, eig_vecs = np.linalg.eig(np.linalg.inv(scatter_within).dot(scatter_between))
+
+# Select direction of maximum discrimination
+lda_vector = eig_vecs[:, np.argmax(eig_vals)]
+
+print("\nLDA Direction Vector (Manual Calculation):")
+print(lda_vector)
