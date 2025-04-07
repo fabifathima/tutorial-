@@ -1,0 +1,39 @@
+import numpy as np
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import mean_squared_error
+from scipy.cluster.hierarchy import linkage, dendrogram
+import matplotlib.pyplot as plt
+from mlxtend.frequent_patterns import apriori, association_rules
+
+# Slightly modified dataset for Apriori (added some different combinations)
+transactions = [
+    ['milk', 'bread', 'banana', 'apple'],
+    ['milk', 'bread', 'banana'],
+    ['milk', 'bread'],
+    ['milk', 'apple'],
+    ['bread', 'banana', 'apple'],
+    ['bread', 'apple'],
+    ['milk', 'bread', 'banana', 'apple'],
+    ['banana', 'apple']
+]
+
+# Get sorted list of all unique items
+unique_items = sorted({item for transaction in transactions for item in transaction})
+
+# Convert transactions to a DataFrame with one-hot encoding
+df_transactions = pd.DataFrame([{item: (item in transaction) for item in unique_items} for transaction in transactions])
+
+# Find frequent itemsets using Apriori algorithm
+frequent_itemsets = apriori(df_transactions, min_support=0.25, use_colnames=True)
+
+# Generate association rules from frequent itemsets
+rules = association_rules(frequent_itemsets, metric="lift", min_threshold=1.1)
+
+# Display frequent itemsets
+print("Frequent Itemsets:")
+print(frequent_itemsets)
+
+# Display association rules
+print("\nAssociation Rules:")
+print(rules)
