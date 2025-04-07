@@ -1,0 +1,35 @@
+import pandas as pd  # For data handling
+import statsmodels.api as sm  # For statistical modeling
+
+# Load dataset
+data_path = "Advertising.csv"
+data = pd.read_csv(data_path)
+
+# Drop unnamed index column if present
+if "Unnamed: 0" in data.columns:
+    data = data.drop(columns=["Unnamed: 0"])
+
+# Define predictors and response
+features = data[["TV", "radio", "newspaper"]]
+target = data["sales"]
+
+# Add constant (intercept) to features
+features = sm.add_constant(features)
+
+# Build and fit the OLS regression model
+regression_model = sm.OLS(target, features).fit()
+
+# Extract metrics
+residual_std_error = regression_model.mse_resid ** 0.5
+r2 = regression_model.rsquared
+f_stat = regression_model.fvalue
+
+# Display results
+print("Model Evaluation Metrics:")
+print(f"Residual Standard Error: {residual_std_error:.4f}")
+print(f"R-squared: {r2:.4f}")
+print(f"F-statistic: {f_stat:.2f}")
+
+# Full model summary
+print("\nDetailed Regression Summary:")
+print(regression_model.summary())
